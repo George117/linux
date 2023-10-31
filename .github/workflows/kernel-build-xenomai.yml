@@ -46,11 +46,9 @@ jobs:
         #echo "[LS]: $(ls -al)"
         wget https://source.denx.de/Xenomai/xenomai/-/archive/v3.2.4/xenomai-v3.2.4.tar.bz2 --no-check-certificate
         tar xjvf xenomai-v3.2.4.tar.bz2
-        echo "[LS]: $(ls -al)"
               
     - name: Prepare Kernel with Xenomai
       run: |
-        ls
         ./xenomai-v3.2.4/scripts/prepare-kernel.sh  --arch=arm64 --linux=./
       
     - name: Build kernel ${{matrix.name}}
