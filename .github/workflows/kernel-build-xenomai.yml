@@ -58,7 +58,7 @@ jobs:
         mkdir mnt
         mkdir mnt/fat32
         mkdir mnt/ext4
-        mkdir mnt/overlays
+        mkdir mnt/fat32/overlays
         make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- bcm2711_defconfig
         make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- Image modules dtbs -j 2
         sudo env PATH=$PATH make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- INSTALL_MOD_PATH=mnt/ext4 modules_install
