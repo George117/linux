@@ -32,11 +32,8 @@ jobs:
 
     - name: Install toolchain
       run:
-        if [[ "${{matrix.arch}}" == "arm64" ]]; then
-          sudo apt-get install gcc-aarch64-linux-gnu;
-        else
-          sudo apt-get install gcc-arm-linux-gnueabihf;
-        fi
+        sudo apt-get install gcc-aarch64-linux-gnu;
+
       timeout-minutes: 5
 
     - uses: actions/checkout@v3
@@ -48,24 +45,17 @@ jobs:
       run: |
         mkdir ${{github.workspace}}/build
         export ARCH=${{matrix.arch}}
-        if [[ "$ARCH" == "arm64" ]]; then
-          export CROSS_COMPILE=aarch64-linux-gnu-
-          export DTS_SUBDIR=broadcom
-          export IMAGE=Image.gz
-        else
-          export CROSS_COMPILE=arm-linux-gnueabihf-
-          export DTS_SUBDIR=
-          export IMAGE=zImage
-        fi
-        make O=${{github.workspace}}/build ${{matrix.defconfig}}
-        scripts/config --file ${{github.workspace}}/build/.config --set-val CONFIG_WERROR y
-        make O=${{github.workspace}}/build -j ${{env.NUM_JOBS}} $IMAGE modules dtbs
-        mkdir -p ${{github.workspace}}/install/boot/overlays
-        make O=${{github.workspace}}/build INSTALL_MOD_PATH=${{github.workspace}}/install modules_install
-        cp ${{github.workspace}}/build/arch/${ARCH}/boot/dts/${DTS_SUBDIR}/*.dtb ${{github.workspace}}/install/boot/
-        cp ${{github.workspace}}/build/arch/${ARCH}/boot/dts/overlays/*.dtb* ${{github.workspace}}/install/boot/overlays/
-        cp ${{github.workspace}}/arch/${ARCH}/boot/dts/overlays/README ${{github.workspace}}/install/boot/overlays/
-        cp ${{github.workspace}}/build/arch/${ARCH}/boot/$IMAGE ${{github.workspace}}/install/boot/${{matrix.kernel}}.img
+        KERNEL=kernel8
+        export CROSS_COMPILE=aarch64-linux-gnu-
+        export DTS_SUBDIR=broadcom
+        export IMAGE=Image.gz
+        
+        wget https://source.denx.de/Xenomai/xenomai/-/archive/v3.2.4/xenomai-v3.2.4.tar.bz2 --no-check-certificate
+        tar xjvf xenomai-v3.2.4.tar.bz2
+        xenomai-v3.2.4/scripts/prepare-kernel.sh  --arch=arm64 --linux=./
+        KERNEL=kernel8
+        make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- bcm2711_defconfig
+        make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- Image modules dtbs -j 24
 
     - name: Tar build
       run: tar -cvf ${{matrix.name}}_build.tar -C ${{github.workspace}}/install .
