@@ -28,10 +28,12 @@ jobs:
     steps:
     - name: Update install
       run:
+        echo "Update install"
         sudo apt-get update
 
     - name: Install toolchain
       run:
+        echo "Install toolchain"
         sudo apt-get install gcc-aarch64-linux-gnu;
 
       timeout-minutes: 5
@@ -49,16 +51,32 @@ jobs:
         export CROSS_COMPILE=aarch64-linux-gnu-
         export DTS_SUBDIR=broadcom
         export IMAGE=Image.gz
-        
-        wget https://source.denx.de/Xenomai/xenomai/-/archive/v3.2.4/xenomai-v3.2.4.tar.bz2 --no-check-certificate
-        tar xjvf xenomai-v3.2.4.tar.bz2
-        xenomai-v3.2.4/scripts/prepare-kernel.sh  --arch=arm64 --linux=./
-        KERNEL=kernel8
-        make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- bcm2711_defconfig
-        make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- Image modules dtbs -j 24
 
+        echo "Get Xenomai"
+        wget https://source.denx.de/Xenomai/xenomai/-/archive/v3.2.4/xenomai-v3.2.4.tar.bz2 --no-check-certificate
+        
+        echo "Unzip Xenomai"
+        tar xjvf xenomai-v3.2.4.tar.bz2
+
+        echo "Prepare Kernel with Xenomai"
+        xenomai-v3.2.4/scripts/prepare-kernel.sh  --arch=arm64 --linux=./
+
+        echo "Default config for BCM2711 "
+        make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- bcm2711_defconfig
+
+        echo "Make Image "
+        make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- Image modules dtbs -j 2
+
+        mkdir mnt/fat32
+        mkdir mnt/ext4
+        sudo env PATH=$PATH make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- INSTALL_MOD_PATH=mnt/ext4 modules_install
+        sudo cp arch/arm64/boot/Image mnt/fat32/$KERNEL.img
+        sudo cp arch/arm64/boot/dts/broadcom/*.dtb mnt/fat32/
+        sudo cp arch/arm64/boot/dts/overlays/*.dtb* mnt/fat32/overlays/
+        sudo cp arch/arm64/boot/dts/overlays/README mnt/fat32/overlays/
+        
     - name: Tar build
-      run: tar -cvf ${{matrix.name}}_build.tar -C ${{github.workspace}}/install .
+      run: tar -cvf ${{matrix.name}}_build.tar -C ${{github.workspace}}/mnt .
 
     - name: Upload results
       uses: actions/upload-artifact@v3
