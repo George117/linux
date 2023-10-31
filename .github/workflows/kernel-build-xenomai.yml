@@ -32,9 +32,9 @@ jobs:
         sudo apt-get update
 
     - name: Install toolchain
-      run:
+      run: |
         echo "Install toolchain"
-        sudo apt-get install gcc-aarch64-linux-gnu;
+        sudo apt-get install gcc-aarch64-linux-gnu
 
       timeout-minutes: 5
 
