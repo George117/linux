@@ -61,19 +61,19 @@ jobs:
         echo "Prepare Kernel with Xenomai"
         xenomai-v3.2.4/scripts/prepare-kernel.sh  --arch=arm64 --linux=./
 
-        echo "Default config for BCM2711 "
-        make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- bcm2711_defconfig
+        #echo "Default config for BCM2711 "
+        #make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- bcm2711_defconfig
 
-        echo "Make Image "
-        make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- Image modules dtbs -j 2
+        #echo "Make Image "
+        #make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- Image modules dtbs -j 2
 
-        mkdir mnt/fat32
-        mkdir mnt/ext4
-        sudo env PATH=$PATH make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- INSTALL_MOD_PATH=mnt/ext4 modules_install
-        sudo cp arch/arm64/boot/Image mnt/fat32/$KERNEL.img
-        sudo cp arch/arm64/boot/dts/broadcom/*.dtb mnt/fat32/
-        sudo cp arch/arm64/boot/dts/overlays/*.dtb* mnt/fat32/overlays/
-        sudo cp arch/arm64/boot/dts/overlays/README mnt/fat32/overlays/
+        #mkdir mnt/fat32
+        #mkdir mnt/ext4
+        #sudo env PATH=$PATH make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- INSTALL_MOD_PATH=mnt/ext4 modules_install
+        #sudo cp arch/arm64/boot/Image mnt/fat32/$KERNEL.img
+        #sudo cp arch/arm64/boot/dts/broadcom/*.dtb mnt/fat32/
+        #sudo cp arch/arm64/boot/dts/overlays/*.dtb* mnt/fat32/overlays/
+        #sudo cp arch/arm64/boot/dts/overlays/README mnt/fat32/overlays/
         
     - name: Tar build
       run: tar -cvf ${{matrix.name}}_build.tar -C ${{github.workspace}}/mnt .
