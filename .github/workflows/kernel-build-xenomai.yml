@@ -46,32 +46,25 @@ jobs:
 
     - name: Get Xenomai
       run: |
+        cd ..
         ls
         wget https://source.denx.de/Xenomai/xenomai/-/archive/v3.2.4/xenomai-v3.2.4.tar.bz2 --no-check-certificate
         echo "Unzip Xenomai"
         tar xjvf xenomai-v3.2.4.tar.bz2
+        cd linux
               
     - name: Prepare Kernel with Xenomai
       run: |
         echo "Prepare Kernel with Xenomai"
-        xenomai-v3.2.4/scripts/prepare-kernel.sh  --arch=arm64 --linux=./
+        ../xenomai-v3.2.1/scripts/prepare-kernel.sh  --arch=arm64 --linux=./
       
     - name: Build kernel ${{matrix.name}}
       run: |
-        mkdir ${{github.workspace}}/build
-        export ARCH=${{matrix.arch}}
         KERNEL=kernel8
-        export CROSS_COMPILE=aarch64-linux-gnu-
-        export DTS_SUBDIR=broadcom
-        export IMAGE=Image.gz
-
-
         #echo "Default config for BCM2711 "
         #make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- bcm2711_defconfig
-
         #echo "Make Image "
         #make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- Image modules dtbs -j 2
-
         mkdir ${{github.workspace}}/mnt/fat32
         mkdir ${{github.workspace}}/mnt/ext4
         ls
