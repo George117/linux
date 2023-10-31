@@ -46,22 +46,15 @@ jobs:
 
     - name: Get Xenomai
       run: |
-         wget https://source.denx.de/Xenomai/xenomai/-/archive/v3.2.4/xenomai-v3.2.4.tar.bz2 --no-check-certificate
-         echo "Unzip Xenomai"
-         tar xjvf xenomai-v3.2.4.tar.bz2
-         
-    - name: Sleep for 5 seconds
-      run: sleep 5s
-      shell: bash    
-      
+        ls
+        wget https://source.denx.de/Xenomai/xenomai/-/archive/v3.2.4/xenomai-v3.2.4.tar.bz2 --no-check-certificate
+        echo "Unzip Xenomai"
+        tar xjvf xenomai-v3.2.4.tar.bz2
+              
     - name: Prepare Kernel with Xenomai
       run: |
         echo "Prepare Kernel with Xenomai"
         xenomai-v3.2.4/scripts/prepare-kernel.sh  --arch=arm64 --linux=./
-
-    - name: Sleep for 5 seconds
-      run: sleep 5s
-      shell: bash   
       
     - name: Build kernel ${{matrix.name}}
       run: |
@@ -79,8 +72,9 @@ jobs:
         #echo "Make Image "
         #make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- Image modules dtbs -j 2
 
-        mkdir mnt/fat32
-        mkdir mnt/ext4
+        mkdir ${{github.workspace}}/mnt/fat32
+        mkdir ${{github.workspace}}/mnt/ext4
+        ls
         #sudo env PATH=$PATH make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- INSTALL_MOD_PATH=mnt/ext4 modules_install
         #sudo cp arch/arm64/boot/Image mnt/fat32/$KERNEL.img
         #sudo cp arch/arm64/boot/dts/broadcom/*.dtb mnt/fat32/
