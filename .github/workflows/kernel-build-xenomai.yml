@@ -28,14 +28,11 @@ jobs:
     steps:
     - name: Update install
       run:
-        echo "Update install"
         sudo apt-get update
 
     - name: Install toolchain
       run: |
-        echo "Install toolchain"
         sudo apt-get install gcc-aarch64-linux-gnu
-
       timeout-minutes: 5
 
     - uses: actions/checkout@v3
@@ -43,19 +40,16 @@ jobs:
         fetch-depth: 1
         clean: true
 
-
     - name: Get Xenomai
       run: |
         cd ..
         ls
         wget https://source.denx.de/Xenomai/xenomai/-/archive/v3.2.4/xenomai-v3.2.4.tar.bz2 --no-check-certificate
-        echo "Unzip Xenomai"
         tar xjvf xenomai-v3.2.4.tar.bz2
         cd linux
               
     - name: Prepare Kernel with Xenomai
-      run: |
-        echo "Prepare Kernel with Xenomai"
+      run:
         ../xenomai-v3.2.1/scripts/prepare-kernel.sh  --arch=arm64 --linux=./
       
     - name: Build kernel ${{matrix.name}}
