@@ -1,4 +1,4 @@
-name: Pi kernel build tests
+name: Xenomai Pi kernel build tests
 
 on:
   pull_request:
