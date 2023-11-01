@@ -20,10 +20,15 @@ jobs:
     strategy:
       matrix:
         include:
-          - name: bcm2711_arm64
+          - name: BCM2711_ARM64_rPi4
             arch: arm64
             defconfig: bcm2711_defconfig
             kernel: kernel8
+
+          - name: BCM2712_ARM64_rPi4
+            arch: arm64
+            defconfig: bcm2712_defconfig
+            kernel: kernel_2712
 
     steps:
     - name: Update install
@@ -53,16 +58,15 @@ jobs:
       
     - name: Build kernel ${{matrix.name}}
       run: |
-        KERNEL=kernel8
         cd ${{github.workspace}}
         mkdir mnt
         mkdir mnt/fat32
         mkdir mnt/ext4
         mkdir mnt/fat32/overlays
-        make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- bcm2711_defconfig
-        make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- Image modules dtbs -j 2
-        sudo env PATH=$PATH make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- INSTALL_MOD_PATH=mnt/ext4 modules_install
-        sudo cp arch/arm64/boot/Image mnt/fat32/$KERNEL.img
+        make ARCH=${{matrix.arch}} CROSS_COMPILE=aarch64-linux-gnu- ${{matrix.defconfig}}
+        make ARCH=${{matrix.arch}} CROSS_COMPILE=aarch64-linux-gnu- Image modules dtbs -j 2
+        sudo env PATH=$PATH make ARCH=${{matrix.arch}} CROSS_COMPILE=aarch64-linux-gnu- INSTALL_MOD_PATH=mnt/ext4 modules_install
+        sudo cp arch/arm64/boot/Image mnt/fat32/${{matrix.kernel}}.img
         sudo cp arch/arm64/boot/dts/broadcom/*.dtb mnt/fat32/
         sudo cp arch/arm64/boot/dts/overlays/*.dtb* mnt/fat32/overlays/
         sudo cp arch/arm64/boot/dts/overlays/README mnt/fat32/overlays/
