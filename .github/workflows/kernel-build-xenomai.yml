@@ -25,7 +25,7 @@ jobs:
             defconfig: bcm2711_defconfig
             kernel: kernel8
 
-          - name: BCM2712_ARM64_rPi4
+          - name: BCM2712_ARM64_rPi5
             arch: arm64
             defconfig: bcm2712_defconfig
             kernel: kernel_2712
