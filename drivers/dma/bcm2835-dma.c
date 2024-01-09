@@ -852,7 +852,7 @@ static irqreturn_t bcm2835_dma_callback(int irq, void *data)
 	 * if this IRQ handler is threaded.) If the channel is finished, it
 	 * will remain idle despite the ACTIVE flag being set.
 	 */
-	if (is_base_irq_handler())
+	if (is_base_irq_handler()){
 		if (c->is_40bit_channel){
 			writel(BCM2835_DMA_INT | BCM2711_DMA40_ACTIVE | BCM2711_DMA40_PROT |
 			       BCM2711_DMA40_CS_FLAGS(c->dreq),
