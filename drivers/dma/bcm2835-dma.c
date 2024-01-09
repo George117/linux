@@ -817,6 +817,11 @@ static bool do_channel(struct bcm2835_chan *c, struct bcm2835_desc *d)
 	return true;
 }
 
+static inline bool is_base_irq_handler(void)
+{
+	return !bcm2835_dma_oob_capable() || running_oob();
+}
+
 static irqreturn_t bcm2835_dma_callback(int irq, void *data)
 {
 	irqreturn_t ret = IRQ_HANDLED;
