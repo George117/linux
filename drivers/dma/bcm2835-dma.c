@@ -1569,9 +1569,7 @@ static int bcm2835_dma_probe(struct platform_device *pdev)
 			continue;
 
 		/* check if there are other channels that also use this irq */
-==== BASE ====
-		irq_flags = 0;
-==== BASE ====
+		irq_flags = IS_ENABLED(CONFIG_DMA_BCM2835_OOB) ? IRQF_OOB : 0;
 		for (j = 0; j <= BCM2835_DMA_MAX_DMA_CHAN_SUPPORTED; j++)
 			if ((i != j) && (irq[j] == irq[i])) {
 				irq_flags |= IRQF_SHARED;
