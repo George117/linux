@@ -38,6 +38,7 @@ jobs:
     - name: Install toolchain
       run: |
         sudo apt-get install gcc-aarch64-linux-gnu
+        lscpu
       timeout-minutes: 5
 
     - uses: actions/checkout@v3
