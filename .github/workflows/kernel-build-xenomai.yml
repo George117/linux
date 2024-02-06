@@ -65,7 +65,7 @@ jobs:
         mkdir mnt/ext4
         mkdir mnt/fat32/overlays
         make ARCH=${{matrix.arch}} CROSS_COMPILE=aarch64-linux-gnu- ${{matrix.defconfig}}
-        make ARCH=${{matrix.arch}} CROSS_COMPILE=aarch64-linux-gnu- Image modules dtbs -j 2
+        make ARCH=${{matrix.arch}} CROSS_COMPILE=aarch64-linux-gnu- Image modules dtbs -j 4
         sudo env PATH=$PATH make ARCH=${{matrix.arch}} CROSS_COMPILE=aarch64-linux-gnu- INSTALL_MOD_PATH=mnt/ext4 modules_install
         sudo cp arch/arm64/boot/Image mnt/fat32/${{matrix.kernel}}.img
         sudo cp arch/arm64/boot/dts/broadcom/*.dtb mnt/fat32/
